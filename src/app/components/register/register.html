@@ -1,0 +1,36 @@
+
+
+
+
+  <!-- Форма реєстрації і входу -->
+   <div style="max-width: 400px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; font-family: sans-serif; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  
+  <!-- 1. Динамічний заголовок -->
+  <h2 style="text-align: center; color: #007bff; margin-top: 0;">
+    {{ isLoginMode ? '🔑 Вхід' : '📝 Реєстрація' }}
+  </h2>
+
+  <!-- Поле Email -->
+  <div style="margin-bottom: 15px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Логін (Email):</label>
+    <input type="email" name="email" [(ngModel)]="registerForm.email" style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;" placeholder="Введіть email..."> 
+  </div>
+
+  <!-- Поле пароля -->
+  <div style="margin-bottom: 20px;">
+    <label style="display: block; font-weight: bold; margin-bottom: 5px;">Пароль:</label>
+    <input type="password" name="password" [(ngModel)]="registerForm.password" placeholder="Введіть пароль..." required style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+  </div>
+
+  <!-- 2. Головна магія тут: динамічний клік та текст кнопки -->
+  <button (click)="isLoginMode ? onLogin() : onRegister()" style="width: 100%; background: #28a745; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">
+    {{ isLoginMode ? 'Увійти' : 'Зареєструватися' }}
+  </button>
+
+  <!-- Перемикач / посилання на логін -->
+  <div style="text-align: center; margin-top: 15px;">
+    <span (click)="switchMode()" style="cursor: pointer; color: #0d6efd; text-decoration: underline; font-size: 0.9em;">
+      {{ isLoginMode ? 'Ще немає акаунта? Зареєструватися' : 'Вже є акаунт? Увійти' }}
+    </span>
+  </div>
+</div>

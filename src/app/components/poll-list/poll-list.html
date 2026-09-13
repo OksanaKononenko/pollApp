@@ -1,0 +1,180 @@
+<div class="poll-list-container" style="padding: 20px; font-family: sans-serif; max-width: 800px; margin: 0 auto;">
+
+  <!-- 1. ШАПКА КАБІНЕТУ -->
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: #f8f9fa; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <h2 style="margin: 0; color: #333;">📊 Кабінет користувача</h2>
+    
+  </div>
+
+  <!-- 2. ПАНЕЛЬ НАВІГАЦІЇ -->
+  <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; gap: 10px;">
+      <button *ngIf="isLoggedIn && !showHistoryView && !isAdmin" (click)="loadMyHistory()" style="background: #17a2b8; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        📜 Пройдені опитування
+      </button>
+      <button *ngIf="showHistoryView" (click)="backToList()" style="background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        ⬅️ Назад до списку
+      </button>
+    </div>
+    <a *ngIf="isAdmin" routerLink="/admin" style="background: #28a745; color: white; text-decoration: none; padding: 10px 15px; border-radius: 4px; font-weight: bold;">
+      🛠️ Адмін-панель
+    </a>
+  </div>
+
+  <!-- 3. ГОЛОВНИЙ СПИСОК ОПИТУВАНЬ -->
+  <div *ngIf="!showHistoryView">
+    <h1 style="text-align: center; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 25px;">
+      📋 Доступні опитування
+    </h1>
+
+    <div *ngIf="!polls || polls.length === 0" style="text-align: center; color: #777; padding: 20px;">
+      ⏳ Завантаження або опитувань поки немає...
+    </div>
+
+    <!-- ЦИКЛ ВИВОДУ ПАГІНОВАНИХ ДАНИХ -->
+    <div *ngFor="let poll of paginatedPolls; trackBy: trackByPublicId" style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+      
+      <h3 style="margin-top: 0; color: #007bff; margin-bottom: 15px;">
+        {{ poll.title || poll.question }}
+      </h3>
+
+      <div *ngIf="isLoggedIn">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button 
+            [disabled]="poll.hasVoted"
+            (click)="viewResults(poll, 'vote')" 
+            [style.background]="poll.hasVoted ? '#6c757d' : '#28a745'"
+            [style.cursor]="poll.hasVoted ? 'not-allowed' : 'pointer'"
+            style="color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; font-weight: bold;">
+            {{ poll.hasVoted ? '✅ Вже проголосовано' : '✍️ Проголосувати' }}
+          </button>
+
+          <button 
+            (click)="viewResults(poll, 'results')" 
+            style="background: #0d6efd; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.9em; font-weight: bold; cursor: pointer;">
+            📊 Результати
+          </button>
+        </div>
+
+        <div *ngIf="expandedPollId === poll.publicId" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+          
+          <!-- Вкладка ГОЛОСУВАННЯ -->
+          <div *ngIf="expandedTab === 'vote'">
+            <h4 style="margin-top: 0;">Оберіть варіант:</h4>
+            
+            <div *ngIf="expandedPollData?.options && expandedPollData.options.length > 0; else voteLoading">
+              <div *ngFor="let option of expandedPollData.options" style="margin-bottom: 10px;">
+                <label style="cursor: pointer; display: flex; align-items: center;">
+                  <input type="radio" [name]="'poll_' + poll.publicId" [value]="option.id || option.optionId || option._id || option.text" [(ngModel)]="selectedOptionId" style="margin-right: 10px;">
+                  {{ option.text || option }}
+                </label>
+              </div>
+
+              <button (click)="vote(poll.publicId, selectedOptionId)" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                ✅ Відправити голос
+              </button>
+            </div>
+            <ng-template #voteLoading>
+              <p style="color: #666; font-size: 0.9em; margin: 10px 0;">⏳ Завантаження варіантів...</p>
+            </ng-template>
+          </div>
+
+          <!-- Вкладка РЕЗУЛЬТАТИ -->
+          <div *ngIf="expandedTab === 'results'">
+            <h4 style="margin-top: 0;">📊 Поточні результати:</h4>
+            
+            <div *ngIf="expandedPollData?.options && expandedPollData.options.length > 0; else resLoading">
+              <div *ngFor="let option of expandedPollData.options" style="margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                  <span>{{ option.text || 'Варіант' }}</span>
+                  <strong>{{ option.votesCount || 0 }} голосів ({{ option.percentage || 0 }}%)</strong>
+                </div>
+                
+                <div style="background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden;">
+                  <div [style.width]="(option.percentage || 0) + '%'" style="background: #0d6efd; height: 100%;"></div>
+                </div>
+              </div>
+              
+              <div style="text-align: right; margin-top: 10px; font-size: 0.9em; color: #555;">
+                Всього голосів: <strong>{{ expandedPollData?.totalVotes || 0 }}</strong>
+              </div>
+            </div>
+
+            <ng-template #resLoading>
+              <p style="color: #666; font-size: 0.9em; margin: 10px 0;">⏳ Завантаження результатів...</p>
+            </ng-template>
+          </div>
+
+        </div>
+      </div>
+
+      <div *ngIf="!isLoggedIn" style="margin-top: 10px;">
+        <p style="color: #dc3545; font-size: 0.9em; margin-bottom: 5px;">
+          🔒 Увійдіть у систему, щоб взяти участь в опитуванні.
+        </p>
+        <a routerLink="/login" style="color: #007bff; font-weight: bold; text-decoration: none; font-size: 0.9em;">👉 Увійти в акаунт</a>
+      </div>
+
+    </div>
+
+    <!-- ПАНЕЛЬ ПАГІНАЦІЇ -->
+    <div *ngIf="totalPages > 1" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; padding-bottom: 20px;">
+      <button 
+        (click)="prevPage()" 
+        [disabled]="currentPage === 1" 
+        [style.opacity]="currentPage === 1 ? '0.5' : '1'"
+        style="padding: 8px 15px; border-radius: 4px; border: 2px solid #007bff; background: white; color: #007bff; font-weight: bold; cursor: pointer;">
+        ⬅️ Назад
+      </button>
+      
+      <span style="color: #333; font-size: 1.1em; font-weight: bold;">
+        Сторінка {{ currentPage }} з {{ totalPages }}
+      </span>
+
+      <button 
+        (click)="nextPage()" 
+        [disabled]="currentPage === totalPages" 
+        [style.opacity]="currentPage === totalPages ? '0.5' : '1'"
+        style="padding: 8px 15px; border-radius: 4px; border: 2px solid #007bff; background: white; color: #007bff; font-weight: bold; cursor: pointer;">
+        Далі ➡️
+      </button>
+    </div>
+
+  </div>
+
+  <!-- 4. ІСТОРІЯ ПРОЙДЕНИХ -->
+  <div *ngIf="showHistoryView">
+    <h2 style="color: #17a2b8;">📜 Ваша історія опитувань</h2>
+    <div *ngIf="myHistory && myHistory.length > 0; else noHistory">
+       <div *ngFor="let item of myHistory" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #fff;">
+         <h3 style="margin-top: 0; color: #333;">{{ item.title || item.question }}</h3>
+         
+         <div *ngIf="item.options && item.options.length > 0" style="margin: 10px 0; background: #f8f9fa; padding: 10px; border-radius: 4px;">
+           <div style="font-size: 0.85em; color: #666; margin-bottom: 6px;">Варіанти опитування:</div>
+           <div *ngFor="let opt of item.options" style="display: flex; align-items: center; margin-bottom: 4px; font-size: 0.95em;">
+             <span *ngIf="item.selectedOptionId && isUserChoice(opt, item)" style="color: #28a745; font-weight: bold; margin-right: 6px;">👉</span>
+             <span *ngIf="!item.selectedOptionId || !isUserChoice(opt, item)" style="margin-right: 22px;"></span>
+              
+             <span [style.font-weight]="(item.selectedOptionId && isUserChoice(opt, item)) ? 'bold' : 'normal'">
+               {{ opt.text || opt }}
+             </span>
+             <span *ngIf="item.selectedOptionId && isUserChoice(opt, item)" style="color: #28a745; font-size: 0.8em; margin-left: 8px;">
+               (ваш вибір)
+             </span>
+           </div>
+         </div>
+
+         <!-- Якщо вибір невідомий (старий голос без локального сховища) -->
+         <div *ngIf="!item.selectedOptionId" style="color: #666; font-size: 0.9em; font-style: italic; margin-bottom: 5px;">
+           ℹ️ Голос зараховано (деталі вибору збережено на сервері / недоступні для старих сесій)
+         </div>
+
+         <p style="color: #28a745; font-weight: bold; margin-bottom: 0; font-size: 0.9em; margin-top: 8px;">
+           ✅ Ваша відповідь врахована
+         </p>
+       </div>
+    </div>
+    <ng-template #noHistory><p>Ви ще не пройшли жодного опитування.</p></ng-template>
+  </div>
+
+</div>

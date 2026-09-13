@@ -1,12 +1,21 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from './core/services/auth';
+import { NavbarComponent } from './components/navbar/navbar';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
-  templateUrl: './app.html',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, NavbarComponent],
+  template: `
+    <app-navbar></app-navbar>
+    <main style="padding: 20px;">
+      <router-outlet></router-outlet>
+    </main>
+  `
 })
-export class App {
+export class AppComponent {
   protected readonly title = signal('pollApp');
+  public authService = inject(AuthService);
 }
