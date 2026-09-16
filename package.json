@@ -1,9 +1,9 @@
 {
   "name": "poll-app",
   "version": "0.0.0",
-  
+
 "engines": {
-    "node": "20.x"
+    "node": "22.x"
   },
 
 

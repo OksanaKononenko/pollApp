@@ -20,6 +20,8 @@
   <div style="margin-bottom: 20px;">
     <label style="display: block; font-weight: bold; margin-bottom: 5px;">Пароль:</label>
     <input type="password" name="password" [(ngModel)]="registerForm.password" placeholder="Введіть пароль..." required style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+<!-- Підказка для користувача -->
+  <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">Пароль має містити щонайменше 8 символів</small>
   </div>
 
   <!-- 2. Головна магія тут: динамічний клік та текст кнопки -->
