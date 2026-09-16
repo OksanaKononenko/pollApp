@@ -6,7 +6,7 @@ import { Observable } from 'rxjs'; // 👈 Додаємо імпорт 'of'
   providedIn: 'root'
 })
 export class PollService {
-  private apiUrl = 'http://localhost:3000/api/surveys';
+  private apiUrl = 'https://my-backend-server-8hd4.onrender.com/api/surveys';
 
   constructor(private http: HttpClient) {}
 
@@ -23,14 +23,14 @@ export class PollService {
   // Головний список тепер зможуть бачити і гості, і залогінені
 //   getPolls(): Observable<any> {
  
-// return this.http.get('http://localhost:3000/api/surveys/list');
+// return this.http.get('https://my-backend-server-8hd4.onrender.com/api/surveys/list');
 //   }
 getPolls(): Observable<any> {
     // Додаємо { headers: this.getAuthHeaders() }
-    return this.http.get('http://localhost:3000/api/surveys/list', { headers: this.getAuthHeaders() });
+    return this.http.get('https://my-backend-server-8hd4.onrender.com/api/surveys/list', { headers: this.getAuthHeaders() });
   }
 getPollById(id: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/api/surveys/${id}`, { headers: this.getAuthHeaders() });
+    return this.http.get(`https://my-backend-server-8hd4.onrender.com/api/surveys/${id}`, { headers: this.getAuthHeaders() });
   }
 
 
@@ -58,7 +58,7 @@ getPollById(id: string): Observable<any> {
 
   //   // 3. Відправляємо POST-запит на бекенд разом із заголовками
   //   // (Перевірте, щоб адреса збігалася з вашим бекендом)
-  //   return this.http.post('http://localhost:3000/api/surveys', pollData, { headers: headers });
+  //   return this.http.post('https://my-backend-server-8hd4.onrender.com/api/surveys', pollData, { headers: headers });
   // }
   updatePoll(id: string, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data, { headers: this.getAuthHeaders() });
@@ -81,19 +81,19 @@ getPollById(id: string): Observable<any> {
   
 // Отримання деталей для голосування (БЕЗ результатів)
   getPollByPublicId(publicId: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/api/surveys/public/${publicId}`, { headers: this.getAuthHeaders() });
+    return this.http.get(`https://my-backend-server-8hd4.onrender.com/api/surveys/public/${publicId}`, { headers: this.getAuthHeaders() });
   }
 
   // 👇 ДОДАЄМО НОВИЙ МЕТОД ДЛЯ ОТРИМАННЯ ЦИФР (РЕЗУЛЬТАТІВ)
   getPollResults(publicId: string): Observable<any> {
-    return this.http.get(`http://localhost:3000/api/surveys/public/${publicId}/results`, { headers: this.getAuthHeaders() });
+    return this.http.get(`https://my-backend-server-8hd4.onrender.com/api/surveys/public/${publicId}/results`, { headers: this.getAuthHeaders() });
   }
   // Голосування за публічним ID
   vote(publicId: string, optionId: string): Observable<any> {
     // Зверніть увагу: ми змінили адресу на ту, яку ви знайшли на бекенді
-    return this.http.post(`http://localhost:3000/api/surveys/public/${publicId}/vote`, { optionId }, { headers: this.getAuthHeaders() });
+    return this.http.post(`https://my-backend-server-8hd4.onrender.com/api/surveys/public/${publicId}/vote`, { optionId }, { headers: this.getAuthHeaders() });
   }
   getMyHistory(): Observable<any> {
-  return this.http.get('http://localhost:3000/api/surveys/history', { headers: this.getAuthHeaders() });
+  return this.http.get('https://my-backend-server-8hd4.onrender.com/api/surveys/history', { headers: this.getAuthHeaders() });
 }
 }

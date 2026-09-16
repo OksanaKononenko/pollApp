@@ -10,7 +10,10 @@ import { inject } from '@angular/core/primitives/di';
 })
 export class AuthService {
   // Адреса нашого бекенду для авторизації
-  private apiUrl = 'http://localhost:3000/api/auth';
+//  private apiUrl = 'http://localhost:3000/api/auth';  // https://my-backend-server-8hd4.onrender.com/
+
+
+  private apiUrl = 'https://my-backend-server-8hd4.onrender.com/api/auth';  // https://my-backend-server-8hd4.onrender.com/
 private router = inject(Router)
   constructor(private http: HttpClient) {}
 
@@ -70,7 +73,7 @@ logout() {
 
 // Метод для реєстрації нового користувача
  register(email: string, password: string) {
-    return this.http.post('http://localhost:3000/api/auth/register', { 
+    return this.http.post('https://my-backend-server-8hd4.onrender.com/api/auth/register', { 
       email: email, 
       password: password,
  
