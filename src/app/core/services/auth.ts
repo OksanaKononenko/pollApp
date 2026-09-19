@@ -55,7 +55,7 @@ logout() {
     console.log('Токен після виходу:', localStorage.getItem('token'));
     console.log('Роль після виходу:', localStorage.getItem('role'));
 
-    // 2. Перекидаємо користувача на головну сторінку (або на логін)
+    // 2. Перекидаємо користувача на головну сторінку  
     this.router.navigate(['/']); 
   }
  

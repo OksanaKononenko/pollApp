@@ -63,32 +63,64 @@ onRegister() {
       }
     });
   }
-onLogin() {
-    if (!this.registerForm.email || !this.registerForm.password) {
-      alert('Будь ласка, введіть email та пароль!');
-      return;
-    }
+// onLogin() {
+//     if (!this.registerForm.email || !this.registerForm.password) {
+//       alert('Будь ласка, введіть email та пароль!');
+//       return;
+//     }
 
-    this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
-      next: (res: any) => {
-console.log('Відповідь сервера:', res); // Тепер res використовується
-  alert('Реєстрація успішна!');
-  this.router.navigate(['/login']);
+//     this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
+//       next: (res: any) => {
+// console.log('Відповідь сервера:', res); // Тепер res використовується
+//   alert('Реєстрація успішна!');
+//   this.router.navigate(['/login']);
 
-        // 1. Читаємо роль, яку зберіг бекенд/сервіс
-        const role = localStorage.getItem('role');
+//         // 1. Читаємо роль, яку зберіг бекенд/сервіс
+//         const role = localStorage.getItem('role');
         
-        // 2. Робимо розподіл по кабінетах
-        if (role === 'admin') {
-          this.router.navigate(['/admin']); // Адміна — в адмінку
-        } else {
-          this.router.navigate(['/polls']); // Юзера — до списку
-        }
-      },
-      error: (err) => {
-        console.error('Помилка входу:', err);
-        alert('Помилка входу! Перевірте правильність email та пароля.');
-      }
-    });
+//         // 2. Робимо розподіл по кабінетах
+//         if (role === 'admin') {
+//           this.router.navigate(['/admin']); // Адміна — в адмінку
+//         } else {
+//           this.router.navigate(['/polls']); // Юзера — до списку
+//         }
+//       },
+//       error: (err) => {
+//         console.error('Помилка входу:', err);
+//         alert('Помилка входу! Перевірте правильність email та пароля.');
+//       }
+//     });
+//   }
+
+
+onLogin() {
+  if (!this.registerForm.email || !this.registerForm.password) {
+    alert('Пожалуйста, введите email и пароль!');
+    return;
   }
+
+  this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
+    next: (res: any) => {
+      console.log('Ответ сервера:', res);
+
+      // Сохраняем токен/роль при необходимости, если это не делает сервис:
+      if (res?.token) localStorage.setItem('token', res.token);
+      if (res?.role) localStorage.setItem('role', res.role);
+
+      // Читаем роль из ответа сервера или локального хранилища
+      const role = res?.role || localStorage.getItem('role');
+      
+      // Прямой распределительный переход без лишнего /login
+      if (role === 'admin') {
+        this.router.navigate(['/admin']); // Адміна — в адмінку
+      } else {
+        this.router.navigate(['/polls']); // Юзера — до списку
+      }
+    },
+    error: (err) => {
+      console.error('Ошибка входа:', err);
+      alert('Ошибка входа! Проверьте правильность email и пароля.');
+    }
+  });
+}
 }
