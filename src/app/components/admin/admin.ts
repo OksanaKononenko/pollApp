@@ -219,14 +219,41 @@ export class AdminComponent implements OnInit {
 
 
 
-if (this.isEditMode && this.editingPollId) {
+// if (this.isEditMode && this.editingPollId) {
+//       this.pollService.updatePoll(this.editingPollId, payload).subscribe({
+//         next: () => {
+//           alert('Опитування оновлено!');
+//           this.resetForm();
+//           this.loadAdminPolls();
+//         },
+//         error: (err: any) => console.error('Помилка оновлення:', err)
+//       });
+//     } else {
+
+  if (this.isEditMode && this.editingPollId) {
       this.pollService.updatePoll(this.editingPollId, payload).subscribe({
-        next: () => {
+        next: (updatedPoll: any) => {
           alert('Опитування оновлено!');
+          
+          // 🚀 МИТТЄВЕ ОНОВЛЕННЯ ЕКРАНА:
+          const index = this.polls.findIndex(p => p.id === this.editingPollId);
+          if (index !== -1) {
+            // Оновлюємо питання та варіанти прямо в масиві
+            this.polls[index].question = payload.question;
+            if (updatedPoll && updatedPoll.options) {
+              this.polls[index].options = updatedPoll.options;
+            }
+          }
+          
           this.resetForm();
-          this.loadAdminPolls();
+          this.cdr.detectChanges();
         },
-        error: (err: any) => console.error('Помилка оновлення:', err)
+        error: (err: any) => {
+          console.error('Помилка оновлення:', err);
+          if (err.status === 409) {
+            alert('Неможливо відредагувати опитування: у ньому вже є голоси користувачів!');
+          }
+        }
       });
     } else {
       console.log('🔄 Виклик createPoll полетів у сервіс...');
