@@ -128,7 +128,7 @@ loadMyHistory() {
       }
     }
   }
-
+// Функция isUserChoice проверяет, совпадает ли текущий вариант ответа (Opt: "Signals") с тем, который был выбран (Choice: "Component Store")
   isUserChoice(opt: any, item: any): boolean {
     const optId = String(opt.id || opt.optionId || opt._id || '');
     const choiceId = String(item.selectedOptionId || '');
@@ -136,7 +136,7 @@ loadMyHistory() {
     const choiceText = String(item.selectedOptionText || '').trim();
     
     const isMatch = !!((choiceId && optId === choiceId) || (choiceText && optText === choiceText));
-    console.log(`🔎 [isUserChoice] Opt: "${optText}" (id:${optId}) vs Choice: "${choiceText}" (id:${choiceId}) => MATCH: ${isMatch}`, { opt, item });
+    // console.log(`🔎 [isUserChoice] Opt: "${optText}" (id:${optId}) vs Choice: "${choiceText}" (id:${choiceId}) => MATCH: ${isMatch}`, { opt, item });  // процесс сравнения вариантов ответа в   pollApp.
     
     return isMatch;
   }

@@ -13,10 +13,22 @@ import { AuthService } from '../../core/services/auth';
 export class RegisterComponent {
   isLoginMode: boolean = false;
 
- registerForm = {
-    email: '',
-    password: ''
+//  registerForm = {
+//     email: '',
+//     password: ''
+//   };
+ 
+
+  // Вписуємо тестові дані сюди:
+  registerForm = {
+    email: '1test@gmail.com', // Замініть на реальний email адміна
+    password: 'Password' , // Замініть на реальний пароль
+
+
+
   };
+
+
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -32,37 +44,55 @@ switchMode() {
       this.router.navigate(['/register']);
     }
   }
-onRegister() {
-    if (!this.registerForm.email || !this.registerForm.password) {
-      alert('Будь ласка, заповніть усі поля!');
-      return;
-    }
+  // --------------------------------------
+// onRegister() {
+//     if (!this.registerForm.email || !this.registerForm.password) {
+//       alert('Будь ласка, заповніть усі поля!');
+//       return;
+//     }
 
-    // 1. Спочатку реєструємо користувача
-    this.authService.register(this.registerForm.email, this.registerForm.password).subscribe({
-      next: () => {
-        // Реєстрація успішна! 
-        alert('Реєстрація успішна! Виконуємо вхід...');
+//     // 1. Спочатку реєструємо користувача
+//     this.authService.register(this.registerForm.email, this.registerForm.password).subscribe({
+//       next: () => {
+//         // Реєстрація успішна! 
+//         alert('Реєстрація успішна! Виконуємо вхід...');
         
-        // 2. Одразу автоматично логінимо його з тими ж даними
-        this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
-          next: () => {
-            // Вхід успішний, перекидаємо в кабінет опитувань
-            this.router.navigate(['/polls']);
-          },
-          error: (loginErr) => {
-            console.error('Помилка автоматичного входу:', loginErr);
-            // Якщо автологін чомусь не спрацював, просто перемикаємо форму на Вхід
-            this.router.navigate(['/login']);
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Помилка реєстрації:', err);
-        alert('Не вдалося зареєструватися. Можливо, такий користувач уже існує.');
-      }
-    });
-  }
+
+
+// // next: 
+// // (res: any) => {
+// //   if (res.token) {
+// //     localStorage.setItem('token', res.token);
+// //     // Тимчасово примусово записуємо роль адміна для тестування UI
+// //     localStorage.setItem('role', 'admin'); 
+    
+// //     this.router.navigate(['/admin']);
+// //   }
+// // }
+
+
+
+
+
+//         // 2. Одразу автоматично логінимо його з тими ж даними
+//         this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
+//           next: () => {
+//             // Вхід успішний, перекидаємо в кабінет опитувань
+//             this.router.navigate(['/polls']);
+//           },
+//           error: (loginErr) => {
+//             console.error('Помилка автоматичного входу:', loginErr);
+//             // Якщо автологін чомусь не спрацював, просто перемикаємо форму на Вхід
+//             this.router.navigate(['/login']);
+//           }
+//         });
+//       },
+//       error: (err) => {
+//         console.error('Помилка реєстрації:', err);
+//         alert('Не вдалося зареєструватися. Можливо, такий користувач уже існує.');
+//       }
+//     });
+//   }
 // onLogin() {
 //     if (!this.registerForm.email || !this.registerForm.password) {
 //       alert('Будь ласка, введіть email та пароль!');
@@ -91,6 +121,49 @@ onRegister() {
 //       }
 //     });
 //   }
+// ------------------------------------
+
+
+
+onRegister() {
+  if (!this.registerForm.email || !this.registerForm.password) {
+    alert('Будь ласка, заповніть усі поля!');
+    return;
+  }
+
+  // 1. Спочатку реєструємо користувача
+  this.authService.register(this.registerForm.email, this.registerForm.password).subscribe({
+    next: () => {
+      alert('Реєстрація успішна! Виконуємо вхід...');
+      
+      // 2. Одразу автоматично логінимо його з тими ж даними
+      this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
+        next: (res: any) => {
+          // Зберігаємо справжній токен від бекенду
+          if (res?.token) {
+            localStorage.setItem('token', res.token);
+          }
+          // ------------тестування адмінки----------------------
+          // ТИМЧАСОВИЙ ХАК: Примусово записуємо роль адміна для тестування UI
+          localStorage.setItem('role', 'admin'); 
+          
+          // Перекидаємо одразу в кабінет адміністратора
+          this.router.navigate(['/admin']);
+
+          // ------------------------------------
+        },
+        error: (loginErr) => {
+          console.error('Помилка автоматичного входу:', loginErr);
+          this.router.navigate(['/login']);
+        }
+      });
+    },
+    error: (err) => {
+      console.error('Помилка реєстрації:', err);
+      alert('Не вдалося зареєструватися. Можливо, такий користувач уже існує.');
+    }
+  });
+}
 
 
 onLogin() {
