@@ -42,8 +42,11 @@ export class AdminComponent implements OnInit {
   }
 
   loadAdminPolls() {
-    this.pollService.getPolls().subscribe({
+    this.pollService.getAdminPolls().subscribe({
       next: (data: any) => {
+
+        console.log('🔄 Оновлений список з бекенду:', data.length, 'опитувань'); // 👈 ДОДАЙ ЦЕЙ РЯДОК
+
         if (data && Array.isArray(data)) {
           this.polls = [...data].reverse();
         } else {
@@ -54,6 +57,26 @@ export class AdminComponent implements OnInit {
       error: (err: any) => console.error('Помилка завантаження опитувань:', err)
     });
   }
+
+// loadAdminPolls() {
+//   this.pollService.getAdminPolls().subscribe({
+//     next: (data: any) => {
+//       // 1. Оновлюємо основний масив
+//       if (data && Array.isArray(data)) {
+//         this.polls = [...data].reverse();
+//       } else {
+//         this.polls = data || [];
+//       }
+      
+//       // 2. Геттер paginatedPolls сам підхопить оновлений this.polls,
+//       // тому ми просто даємо команду Angular перемалювати екран:
+//       this.cdr.detectChanges();
+//     },
+//     error: (err: any) => console.error('Помилка завантаження опитувань:', err)
+//   });
+// }
+
+
 
   get paginatedPolls() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
@@ -141,6 +164,8 @@ export class AdminComponent implements OnInit {
   }
 
   saveSurvey() {
+
+    console.log('🟢 Кнопка "Зберегти" успішно натиснута!');
     const questionText = this.surveyForm.question.trim();
     if (questionText.length < 5) {
       alert('Питання має містити щонайменше 5 символів!');
@@ -161,7 +186,40 @@ export class AdminComponent implements OnInit {
       options: validOptions
     };
 
-    if (this.isEditMode && this.editingPollId) {
+    console.log('📦 Дані готові до відправки на бекенд:', payload);
+
+
+
+// if (this.isEditMode && this.editingPollId) {
+//   console.log('Редагування...');
+   
+//       this.pollService.updatePoll(this.editingPollId, payload).subscribe({
+//         next: () => {
+//           alert('Опитування оновлено!');
+//           this.resetForm();
+//           this.loadAdminPolls();
+//         },
+//         error: (err: any) => console.error('Помилка оновлення:', err)
+//       });
+//     } else {
+
+// console.log('Створення нового опитування...');
+ 
+
+
+
+//       this.pollService.createPoll(payload).subscribe({
+//         next: () => {
+//           alert('Опитування успішно створено!');
+//           this.resetForm();
+//           this.loadAdminPolls(); 
+//           this.currentPage = 1; 
+//         },
+//         error: (err: any) => console.error('Помилка створення:', err)
+
+
+
+if (this.isEditMode && this.editingPollId) {
       this.pollService.updatePoll(this.editingPollId, payload).subscribe({
         next: () => {
           alert('Опитування оновлено!');
@@ -171,31 +229,83 @@ export class AdminComponent implements OnInit {
         error: (err: any) => console.error('Помилка оновлення:', err)
       });
     } else {
+      console.log('🔄 Виклик createPoll полетів у сервіс...');
       this.pollService.createPoll(payload).subscribe({
-        next: () => {
-          alert('Опитування успішно створено!');
-          this.resetForm();
-          this.loadAdminPolls(); 
-          this.currentPage = 1; 
-        },
-        error: (err: any) => console.error('Помилка створення:', err)
-      });
+  //       next: (res: any) => {
+
+
+ 
+  //   console.log('✅ Успішне створення бекендом:', res);
+  //   alert('Опитування успішно створено!');
+
+  //   this.resetForm();
+  //   this.loadAdminPolls(); // 👈 перевірте, чи тут викликається актуальний метод завантаження адмін-списку
+  //   this.currentPage = 1; 
+  // },
+next: (res: any) => {
+    console.log('✅ Успішне створення бекендом:', res);
+    alert('Опитування успішно створено!');
+    
+    // 🚀 МИТТЄВЕ ОНОВЛЕННЯ ЕКРАНА:
+    // Просто вставляємо нове опитування на самий початок нашого масиву
+    this.polls.unshift(res); 
+    
+    this.resetForm();
+    this.currentPage = 1; 
+    
+    // Примусово кажемо Angular перемалювати екран із новим масивом
+    this.cdr.detectChanges(); 
+  },
+
+
+
+
+  error: (err: any) => {
+          console.error('🔴 Повний об\'єкт помилки створення:', err);
+          console.error('Статус помилки:', err.status);
+          console.error('Тіло помилки (error body):', err.error);
+        }
+});
     }
   }
 
-  deletePoll(id: string) {
-    if (confirm('Ви впевнені, що хочете видалити це опитування?')) {
-      this.pollService.deletePoll(id).subscribe({
+
+
+  deletePoll(pollId: string) {
+    if (confirm('Ви впевнені, що хочете видалити це опитування назавжди?')) {
+      this.pollService.deletePoll(pollId).subscribe({
         next: () => {
-          this.loadAdminPolls();
-          if (this.currentPage > this.totalPages && this.totalPages > 1) {
-            this.currentPage = this.totalPages;
-          }
+          alert('Опитування видалено!');
+          // Фільтруємо масив, використовуючи правильну змінну pollId
+          this.polls = this.polls.filter(p => p.id !== pollId && p.publicId !== pollId);
+          this.cdr.detectChanges();
         },
         error: (err: any) => console.error('Помилка видалення:', err)
       });
     }
   }
+
+//   deletePoll(id: string) {
+//     if (confirm('Ви впевнені, що хочете видалити це опитування?')) {
+//       this.pollService.deletePoll(id).subscribe({
+//         // next: () => {
+//         //   this.loadAdminPolls();
+//         //   if (this.currentPage > this.totalPages && this.totalPages > 1) {
+//         //     this.currentPage = this.totalPages;
+//         //   }
+//         // },
+
+// next: () => {
+//   alert('Опитування видалено!');
+//   // Відфільтровуємо видалене опитування з масиву
+//   this.polls = this.polls.filter(p => p.id !== pollId && p.publicId !== pollId);
+//   this.cdr.detectChanges();
+// },
+
+//         error: (err: any) => console.error('Помилка видалення:', err)
+//       });
+//     }
+//   }
 
   resetForm() {
     this.isEditMode = false;

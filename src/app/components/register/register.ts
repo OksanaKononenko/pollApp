@@ -21,7 +21,7 @@ export class RegisterComponent {
 
   // Вписуємо тестові дані сюди:
   registerForm = {
-    email: '1test@gmail.com', // Замініть на реальний email адміна
+    email: '2test@gmail.com', // Замініть на реальний email адміна
     password: 'Password' , // Замініть на реальний пароль
 
 
@@ -149,7 +149,8 @@ onRegister() {
           
           // Перекидаємо одразу в кабінет адміністратора
           this.router.navigate(['/admin']);
-
+// 3. Перевіряємо, що саме записалося в пам'ять
+      // console.log('Збережена роль у localStorage:', localStorage.getItem('role'));
           // ------------------------------------
         },
         error: (loginErr) => {

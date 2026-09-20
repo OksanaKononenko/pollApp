@@ -29,6 +29,14 @@ getPolls(): Observable<any> {
     // Додаємо { headers: this.getAuthHeaders() }
     return this.http.get('https://my-backend-server-8hd4.onrender.com/api/surveys/list', { headers: this.getAuthHeaders() });
   }
+
+ 
+
+  // 👇 ДОДАЄМО НОВИЙ МЕТОД ДЛЯ АДМІНА:
+  getAdminPolls(): Observable<any> {
+    return this.http.get('http://localhost:3000/api/surveys', { headers: this.getAuthHeaders() });
+  }
+  
 getPollById(id: string): Observable<any> {
     return this.http.get(`https://my-backend-server-8hd4.onrender.com/api/surveys/${id}`, { headers: this.getAuthHeaders() });
   }
