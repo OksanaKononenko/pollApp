@@ -38,93 +38,158 @@
   </div>
 
   <!-- СПИСОК ОПИТУВАНЬ ІЗ ПАГІНАЦІЄЮ -->
+
   <div>
-    <h2 style="border-bottom: 2px solid #0056b3; padding-bottom: 10px;">Список усіх опитувань</h2>
-    
-<!-- рядок для виводу "сирих" даних: -->
-    <pre style="background: #f8f9fa; padding: 10px;">ДІАГНОСТИКА: {{ paginatedPolls | json }}</pre>
+    <h1>МОЇ ОПИТУВАННЯ</h1>
 
-    <div *ngIf="polls && polls.length > 0; else noPolls">
-      <div *ngFor="let poll of paginatedPolls" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-        
-        <h3 style="margin-top: 0; color: #0056b3;">{{ poll.question }}</h3>
-        <p style="color: #666; margin-bottom: 10px;"><strong>Всього голосів:</strong> {{ poll.totalVotes || 0 }}</p>
-        
-        <!-- КНОПКИ ДІЙ В АДМІНЦІ -->
-        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-          
-          <button 
-            (click)="editPoll(poll)" 
-            [disabled]="poll.totalVotes > 0"
-            [title]="poll.totalVotes > 0 ? 'Це опитування вже має голоси, редагування заборонено' : 'Редагувати'"
-            style="background: #ffc107; color: #333; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer;"
-            [style.opacity]="poll.totalVotes > 0 ? '0.5' : '1'"
-            [style.cursor]="poll.totalVotes > 0 ? 'not-allowed' : 'pointer'">
-            ✏️ Редагувати
-          </button>
+    <div *ngIf="polls.length > 0; else noPolls">
 
-         <button 
-            (click)="viewResults(poll)" 
+      <!-- ОДНЕ ОПИТУВАННЯ -->
+      <div
+        *ngFor="let poll of paginatedPolls"
+        style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px;"
+      >
+
+        <!-- ПИТАННЯ -->
+        <h2>{{ poll.question }}</h2>
+
+        <p>Голосів: {{ poll.totalVotes }}</p>
+        <p>ID: {{ poll.publicId }}</p>
+
+        <!-- ВАРІАНТИ ВІДПОВІДЕЙ -->
+        <div *ngIf="poll.options">
+
+          <h4>Варіанти відповідей:</h4>
+
+          <div *ngFor="let option of poll.options">
+            • {{ option.text }}
+          </div>
+
+        </div>
+
+        <!-- КНОПКИ ДІЙ -->
+        <div
+          style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;"
+        >
+
+       <button
+  (click)="editPoll(poll)"
+  [disabled]="poll.totalVotes > 0"
+  [style.background]="poll.totalVotes > 0 ? '#ccc' : '#ffc107'"
+  [style.color]="poll.totalVotes > 0 ? '#888' : '#333'"
+  [style.cursor]="poll.totalVotes > 0 ? 'not-allowed' : 'pointer'"
+  [title]="poll.totalVotes > 0 ? 'Це опитування вже має голоси, редагування заборонено' : 'Редагувати'"
+  style="border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
+>
+  ✏️ Редагувати
+</button>
+
+          <button
+            (click)="viewResults(poll)"
             [disabled]="!poll.totalVotes || poll.totalVotes === 0"
             [title]="!poll.totalVotes || poll.totalVotes === 0 ? 'Ще немає голосів для перегляду' : 'Переглянути результати'"
             style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
-            [style.opacity]="!poll.totalVotes || poll.totalVotes === 0 ? '0.5' : '1'"
-            [style.cursor]="!poll.totalVotes || poll.totalVotes === 0 ? 'not-allowed' : 'pointer'">
+          >
             {{ expandedPollId === poll.id ? '❌ Сховати результати' : '👁️ Переглянути результати' }}
           </button>
 
-          <button 
-            (click)="deletePoll(poll.id)" 
-            style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;">
+          <button
+            (click)="deletePoll(poll.id)"
+            style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;"
+          >
             🗑 Видалити
           </button>
+
         </div>
 
-        <!-- РОЗГОРНУТИЙ БЛОК РЕЗУЛЬТАТІВ -->
-        <div *ngIf="expandedPollId === poll.id && expandedPollData" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
-          <h4 style="margin-top: 0; color: #333;">📊 Результати голосування:</h4>
-          
-          <!-- Проходимося по всіх варіантах відповіді -->
-          <div *ngFor="let option of expandedPollData.options" style="margin-bottom: 12px;">
-            
-             
+        <!-- РЕЗУЛЬТАТИ -->
+        <div
+          *ngIf="expandedPollId === poll.id && expandedPollData"
+          style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;"
+        >
 
-           
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-              <span style="font-weight: 500;">{{ option.text || option.name }}</span>
-              <strong>{{ option.votesCount || 0 }} голосів ({{ option.percentage || 0 }}%)</strong>
+          <h4 style="margin-top: 0;">
+            📊 Результати голосування:
+          </h4>
+
+          <div
+            *ngFor="let option of expandedPollData.options"
+            style="margin-bottom: 12px;"
+          >
+
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+
+              <span style="font-weight: 500;">
+                {{ option.text || option.name }}
+              </span>
+
+              <strong>
+                {{ option.votesCount || 0 }}
+                голосів
+                ({{ option.percentage || 0 }}%)
+              </strong>
+
             </div>
 
-            <!-- Візуальна шкала (прогрес-бар) -->
-            <div style="background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden;">
-              <div 
-                [style.width.%]="option.percentage || 0" 
-                style="background: #0d6efd; height: 100%; transition: width 0.3s ease;">
-              </div>
+            <div
+              style="background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden;"
+            >
+              <div
+                [style.width.%]="option.percentage || 0"
+                style="background: #0d6efd; height: 100%; transition: width 0.3s ease;"
+              ></div>
             </div>
+
           </div>
-          
-          <hr style="border-color: #dee2e6;">
-          <div style="text-align: right; color: #6c757d; font-size: 0.9em;">
-            Всього голосів: <strong>{{ expandedPollData.totalVotes || 0 }}</strong>
+
+          <hr>
+
+          <div style="text-align: right; color: #6c757d;">
+            Всього голосів:
+            <strong>
+              {{ expandedPollData.totalVotes || 0 }}
+            </strong>
           </div>
+
         </div>
 
       </div>
+      <!-- КІНЕЦЬ ОДНОГО ОПИТУВАННЯ -->
 
-      <!-- ПАГІНАЦІЯ -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px; background: #e9ecef; border-radius: 6px;">
-        <button (click)="prevPage()" [disabled]="currentPage === 1" [ngStyle]="{'opacity': currentPage === 1 ? '0.5' : '1', 'cursor': currentPage === 1 ? 'not-allowed' : 'pointer'}" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-          ⬅️ Попередня
-        </button>
-        
-        <span style="font-weight: bold; color: #333;">Сторінка {{ currentPage }} з {{ totalPages }}</span>
-        
-        <button (click)="nextPage()" [disabled]="currentPage === totalPages" [ngStyle]="{'opacity': currentPage === totalPages ? '0.5' : '1', 'cursor': currentPage === totalPages ? 'not-allowed' : 'pointer'}" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">
-          Наступна ➡️
-        </button>
-      </div>
     </div>
-    <ng-template #noPolls><p>Опитування відсутні. Створіть перше зверху!</p></ng-template>
+
+    <!-- ЯКЩО ОПИТУВАНЬ НЕМАЄ -->
+    <ng-template #noPolls>
+      <p>Опитування відсутні. Створіть перше зверху!</p>
+    </ng-template>
+
+    <!-- ПАГІНАЦІЯ -->
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px; background: #e9ecef; border-radius: 6px;"
+    >
+
+      <button
+        (click)="prevPage()"
+        [disabled]="currentPage === 1"
+        style="padding: 10px 20px;"
+      >
+        ⬅️ Попередня
+      </button>
+
+      <span style="font-weight: bold;">
+        Сторінка {{ currentPage }} з {{ totalPages }}
+      </span>
+
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+        style="padding: 10px 20px;"
+      >
+        Наступна ➡️
+      </button>
+
+    </div>
+
   </div>
+
 </div>

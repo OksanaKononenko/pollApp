@@ -1,3 +1,7 @@
+import { forkJoin } from 'rxjs';
+
+
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -41,22 +45,93 @@ export class AdminComponent implements OnInit {
     this.loadAdminPolls(); 
   }
 
-  loadAdminPolls() {
-    this.pollService.getAdminPolls().subscribe({
-      next: (data: any) => {
+// loadAdminPolls() {
+//   this.pollService.getAdminPolls().subscribe({
+//     next: (data: any) => {
+//       console.log('API DATA:', data);
 
-        console.log('🔄 Оновлений список з бекенду:', data.length, 'опитувань'); // 👈 ДОДАЙ ЦЕЙ РЯДОК
+//       if (Array.isArray(data)) {
+//         this.polls = [...data].reverse();
+//       } else {
+//         this.polls = [];
+//       }
 
-        if (data && Array.isArray(data)) {
-          this.polls = [...data].reverse();
-        } else {
-          this.polls = data || [];
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => console.error('Помилка завантаження опитувань:', err)
-    });
-  }
+//       console.log('POLLS:', this.polls);
+//       this.cdr.detectChanges();
+//     },
+
+//     error: (err: any) => {
+//       console.error('Помилка завантаження опитувань:', err);
+//     }
+//   });
+// }
+
+
+// loadAdminPolls() {
+//   this.pollService.getAdminPolls().subscribe({
+//     // next: (data: any) => {
+
+//     //   console.log('API DATA:', data);
+
+//     //   if (data && Array.isArray(data.surveys)) {
+//     //     this.polls = [...data.surveys].reverse();
+//     //   } else {
+//     //     this.polls = [];
+//     //   }
+
+//     //   this.polls.forEach((poll: any) => {
+//     //     console.log('Питання:', poll.question);
+//     //     console.log('Варіанти:', poll.options);
+//     //   });
+
+//     //   this.cdr.detectChanges();
+//     // },
+// next: (data: any) => {
+//   console.log('API DATA:', data);
+
+//   this.polls = Array.isArray(data) ? [...data].reverse() : [];
+
+//   console.log('POLLS:', this.polls);
+
+//   this.cdr.detectChanges();
+// },
+//     error: (err: any) => {
+//       console.error('Помилка завантаження опитувань:', err);
+//     }
+//   });
+// }
+
+// loadAdminPolls() {
+//   // Викликаємо правильний адмінський метод
+//   this.pollService.getAdminPolls().subscribe({
+//     next: (data: any) => {
+//       if (data && Array.isArray(data)) {
+//         this.polls = [...data].reverse();
+//       } else {
+//         this.polls = data || [];
+//       }
+//       this.cdr.detectChanges();
+//     },
+//     error: (err: any) => console.error('Помилка завантаження опитувань:', err)
+//   });
+// }
+
+  // loadAdminPolls() {
+  //   this.pollService.getAdminPolls().subscribe({
+  //     next: (data: any) => {
+
+  //       console.log('🔄 Оновлений список з бекенду:', data.length, 'опитувань'); // 👈 ДОДАЙ ЦЕЙ РЯДОК
+
+  //       if (data && Array.isArray(data)) {
+  //         this.polls = [...data].reverse();
+  //       } else {
+  //         this.polls = data || [];
+  //       }
+  //       this.cdr.detectChanges();
+  //     },
+  //     error: (err: any) => console.error('Помилка завантаження опитувань:', err)
+  //   });
+  // }
 
 // loadAdminPolls() {
 //   this.pollService.getAdminPolls().subscribe({
@@ -76,7 +151,35 @@ export class AdminComponent implements OnInit {
 //   });
 // }
 
+loadAdminPolls() {
+  this.pollService.getAdminPolls().subscribe({
+    next: (data: any[]) => {
+      console.log('API DATA:', data);
 
+      const requests = data.map(poll =>
+        this.pollService.getPollById(poll.id)
+      );
+
+      forkJoin(requests).subscribe({
+        next: (fullPolls) => {
+          console.log('FULL POLLS:', fullPolls);
+
+          this.polls = fullPolls.reverse();
+
+          this.cdr.detectChanges();
+        },
+
+        error: (err) => {
+          console.error('Помилка отримання деталей опитувань:', err);
+        }
+      });
+    },
+
+    error: (err: any) => {
+      console.error('Помилка завантаження опитувань:', err);
+    }
+  });
+}
 
   get paginatedPolls() {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
