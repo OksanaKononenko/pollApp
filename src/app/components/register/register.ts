@@ -216,8 +216,8 @@ export class RegisterComponent implements OnInit {
   isLoginMode: boolean = false;
 
   registerForm = {
-    email: '',
-    password: ''
+    email: 'test@gmail.com',
+    password: 'password123'
   };
 
   constructor(private authService: AuthService, private router: Router) {}
@@ -270,30 +270,72 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  onLogin() {
+//   onLogin() {
+//     if (!this.registerForm.email || !this.registerForm.password) {
+//       alert('Пожалуйста, введите email и пароль!');
+//       return;
+//     }
+
+//     this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
+//       next: (res: any) => {
+//         if (res?.token) localStorage.setItem('token', res.token);
+//         if (res?.role) localStorage.setItem('role', res.role);
+
+//         const role = res?.role || localStorage.getItem('role');
+        
+//         // Убран лишний переход на /login перед распределением по кабинетам
+//         // if (role === 'admin') {
+//         //   this.router.navigate(['/admin']);
+//         // } else {
+//         //   this.router.navigate(['/polls']);
+//         // }
+
+
+// // //  ТИМЧАСОВИЙ ХАК: Примусово записуємо роль адміна для тестування UI
+// //           localStorage.setItem('role', 'admin'); 
+          
+// //           // Перекидаємо одразу в кабінет адміністратора
+// //           this.router.navigate(['/admin']);
+// // // 3. Перевіряємо, що саме записалося в пам'ять
+// //       console.log('Збережена роль у localStorage:', localStorage.getItem('role'));
+
+
+//       },
+//       error: (err) => {
+//         console.error('Ошибка входа:', err);
+//         alert('Ошибка входа! Проверьте правильность email и пароля.');
+//       }
+//     });
+
+onLogin() {
     if (!this.registerForm.email || !this.registerForm.password) {
-      alert('Пожалуйста, введите email и пароль!');
+      alert('Будь ласка, введіть email та пароль!');
       return;
     }
 
     this.authService.login(this.registerForm.email, this.registerForm.password).subscribe({
       next: (res: any) => {
+        // 1. Зберігаємо справжній токен
         if (res?.token) localStorage.setItem('token', res.token);
-        if (res?.role) localStorage.setItem('role', res.role);
-
-        const role = res?.role || localStorage.getItem('role');
         
-        // Убран лишний переход на /login перед распределением по кабинетам
+        // 2. Отримуємо справжню роль від бекенду
+        const role = res?.role || res?.user?.role || 'user';
+        localStorage.setItem('role', role);
+
+        console.log('Збережена роль у localStorage:', localStorage.getItem('role'));
+        
+        // 3. Розподіляємо по кабінетах на основі реальної ролі
         if (role === 'admin') {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin']); 
         } else {
-          this.router.navigate(['/polls']);
+          this.router.navigate(['/polls']); 
         }
       },
       error: (err) => {
-        console.error('Ошибка входа:', err);
-        alert('Ошибка входа! Проверьте правильность email и пароля.');
+        console.error('Помилка входу:', err);
+        alert('Помилка входу! Перевірте правильність email та пароля.');
       }
     });
+
   }
 }
