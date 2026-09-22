@@ -146,7 +146,8 @@
   <div *ngIf="showHistoryView">
     <h2 style="color: #17a2b8;">📜 Ваша історія опитувань</h2>
     <div *ngIf="myHistory && myHistory.length > 0; else noHistory">
-       <div *ngFor="let item of myHistory" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #fff;">
+
+       <!-- <div *ngFor="let item of myHistory" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 6px; background: #fff;">
          <h3 style="margin-top: 0; color: #333;">{{ item.title || item.question }}</h3>
          
          <div *ngIf="item.options && item.options.length > 0" style="margin: 10px 0; background: #f8f9fa; padding: 10px; border-radius: 4px;">
@@ -165,16 +166,27 @@
          </div>
 
          <!-- Якщо вибір невідомий (старий голос без локального сховища) -->
-         <div *ngIf="!item.selectedOptionId" style="color: #666; font-size: 0.9em; font-style: italic; margin-bottom: 5px;">
+         <!-- <div *ngIf="!item.selectedOptionId" style="color: #666; font-size: 0.9em; font-style: italic; margin-bottom: 5px;">
            ℹ️ Голос зараховано (деталі вибору збережено на сервері / недоступні для старих сесій)
          </div>
 
          <p style="color: #28a745; font-weight: bold; margin-bottom: 0; font-size: 0.9em; margin-top: 8px;">
            ✅ Ваша відповідь врахована
          </p>
-       </div>
+       </div>   -->
+<!--  -->
+ <div class="history-card" *ngFor="let item of myHistory">
+  <h3 class="history-question">{{ item.question }}</h3>
+  <p class="history-choice">
+    👉 Ваш вибір: <strong>{{ item.selectedOption?.text || 'Невідомо' }}</strong>
+  </p>
+  <small class="history-date">Дата: {{ item.completedAt | date:'short' }}</small>
+</div>      
     </div>
     <ng-template #noHistory><p>Ви ще не пройшли жодного опитування.</p></ng-template>
   </div>
+
+
+
 
 </div>
