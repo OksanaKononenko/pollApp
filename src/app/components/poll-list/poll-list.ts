@@ -67,53 +67,72 @@ export class PollListComponent implements OnInit {
     });
   }
   
+// loadMyHistory() {
+//     this.showHistoryView = true;
+    
+//     // Гібридний фільтр: беремо історію з бекенду (hasVoted) АБО з локального сховища
+//     this.myHistory = this.polls.filter(p => {
+//       const pollId = p.publicId || p.id;
+//       const hasLocalVote = !!localStorage.getItem(`voted_${pollId}`);
+      
+//       // Якщо бекенд каже, що ви голосували, або є запис у браузері
+//       return p.hasVoted || hasLocalVote;
+//     }).map(item => {
+//       const pollId = item.publicId || item.id;
+//       const storedVoteId = localStorage.getItem(`voted_${pollId}`);
+      
+//       return {
+//         ...item,
+//         hasVoted: true, // Гарантуємо статус проходження
+//         // Беремо ID вибору або з бекенду, або з локального сховища
+//         selectedOptionId: item.selectedOptionId || storedVoteId
+//       };
+//     });
+    
+//     this.myHistory.forEach(item => {
+//       const pollId = item.publicId || item.id;
+//       if (!item.options || item.options.length === 0) {
+//         this.pollService.getPollResults(pollId).subscribe({
+//           next: (data: any) => {
+//             item.options = data.results || data.options || data.data?.options || [];
+//             this.updateSelectedText(item);
+//             this.cdr.detectChanges();
+//           },
+//           error: () => {
+//             this.pollService.getPollByPublicId(pollId).subscribe({
+//               next: (fallback: any) => {
+//                 item.options = fallback.options || fallback.data?.options || [];
+//                 this.updateSelectedText(item);
+//                 this.cdr.detectChanges();
+//               }
+//             });
+//           }
+//         });
+//       } else {
+//         this.updateSelectedText(item);
+//       }
+//     });
+
+//     this.cdr.detectChanges();
+//   }
+
+// прибрати логіку читання з localStorage
 loadMyHistory() {
     this.showHistoryView = true;
     
-    // Гібридний фільтр: беремо історію з бекенду (hasVoted) АБО з локального сховища
-    this.myHistory = this.polls.filter(p => {
-      const pollId = p.publicId || p.id;
-      const hasLocalVote = !!localStorage.getItem(`voted_${pollId}`);
-      
-      // Якщо бекенд каже, що ви голосували, або є запис у браузері
-      return p.hasVoted || hasLocalVote;
-    }).map(item => {
-      const pollId = item.publicId || item.id;
-      const storedVoteId = localStorage.getItem(`voted_${pollId}`);
-      
-      return {
-        ...item,
-        hasVoted: true, // Гарантуємо статус проходження
-        // Беремо ID вибору або з бекенду, або з локального сховища
-        selectedOptionId: item.selectedOptionId || storedVoteId
-      };
-    });
-    
-    this.myHistory.forEach(item => {
-      const pollId = item.publicId || item.id;
-      if (!item.options || item.options.length === 0) {
-        this.pollService.getPollResults(pollId).subscribe({
-          next: (data: any) => {
-            item.options = data.results || data.options || data.data?.options || [];
-            this.updateSelectedText(item);
-            this.cdr.detectChanges();
-          },
-          error: () => {
-            this.pollService.getPollByPublicId(pollId).subscribe({
-              next: (fallback: any) => {
-                item.options = fallback.options || fallback.data?.options || [];
-                this.updateSelectedText(item);
-                this.cdr.detectChanges();
-              }
-            });
-          }
-        });
-      } else {
-        this.updateSelectedText(item);
+    // Звертаємося до сервісу і просто зберігаємо те, що повернув сервер
+    this.pollService.getMyHistory().subscribe({
+      next: (data: any) => {
+        // Сервер може повернути масив напряму, або загорнути його в об'єкт (наприклад, { surveys: [...] })
+        this.myHistory = Array.isArray(data) ? data : (data.surveys || data.data || []);
+        
+        // Оновлюємо екран
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Помилка завантаження історії:', err);
       }
     });
-
-    this.cdr.detectChanges();
   }
 
   updateSelectedText(item: any) {

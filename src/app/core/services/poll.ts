@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs'; // 👈 Додаємо імпорт 'of'
+import { Observable } from 'rxjs';  
 
 @Injectable({
   providedIn: 'root'
@@ -107,7 +107,10 @@ getPollById(id: string): Observable<any> {
     // Зверніть увагу: ми змінили адресу на ту, яку ви знайшли на бекенді
     return this.http.post(`https://my-backend-server-8hd4.onrender.com/api/surveys/public/${publicId}/vote`, { optionId }, { headers: this.getAuthHeaders() });
   }
-  getMyHistory(): Observable<any> {
-  return this.http.get('https://my-backend-server-8hd4.onrender.com/api/surveys/history', { headers: this.getAuthHeaders() });
+ getMyHistory(): Observable<any> {
+  //   адресу  робочого ендпоінту бекенду
+  return this.http.get('http://localhost:3000/api/surveys/my/completed', { 
+    headers: this.getAuthHeaders() 
+  });
 }
 }
