@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PollService } from '../../core/services/poll';
 import { AuthService } from '../../core/services/auth';
+import { Poll } from '../../core/models/poll.model';
 
 @Component({
   selector: 'app-admin',
@@ -155,11 +156,11 @@ export class AdminComponent implements OnInit {
 
 loadAdminPolls() {
   this.pollService.getAdminPolls().subscribe({
-    next: (data: any[]) => {
+    next: (data: Poll[]) => {
       console.log('API DATA:', data);
 
       const requests = data.map(poll =>
-        this.pollService.getPollById(poll.id)
+        this.pollService.getPollById(poll.id!)  //! гарантує, що id тут точно існує
       );
 
       forkJoin(requests).subscribe({

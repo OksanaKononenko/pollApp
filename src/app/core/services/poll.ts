@@ -123,7 +123,7 @@
 import { Injectable } from '@angular/core'; 
 import { HttpClient, HttpHeaders } from '@angular/common/http'; 
 import { Observable } from 'rxjs'; 
-
+import { Poll } from '../models/poll.model';
 @Injectable({ 
   providedIn: 'root' 
 }) 
@@ -148,28 +148,30 @@ export class PollService {
   }
 
   // Головний список для юзерів/гостей
-  getPolls(): Observable<any> { 
-    return this.http.get(`${this.apiUrl}/list`, { headers: this.getAuthHeaders() }); 
+  getPolls(): Observable<Poll> { 
+    return this.http.get<Poll>(`${this.apiUrl}/list`, { headers: this.getAuthHeaders() }); 
   }
 
   // Список для адміна
-  getAdminPolls(): Observable<any> { 
-    return this.http.get(this.apiUrl, { headers: this.getAuthHeaders() }); 
-  } 
-    
-  getPollById(id: string): Observable<any> { 
-    return this.http.get(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }); 
+  
+   getAdminPolls(): Observable<Poll[]> { 
+  return this.http.get<Poll[]>(this.apiUrl, { 
+    headers: this.getAuthHeaders() 
+  }); 
+} 
+  getPollById(id: string): Observable<Poll> { 
+    return this.http.get<Poll>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }); 
   }
 
-  createPoll(data: any): Observable<any> { 
+  createPoll(data: any): Observable<Poll> { 
     return this.http.post(this.apiUrl, data, { headers: this.getAuthHeaders() }); 
   }
 
-  updatePoll(id: string, data: any): Observable<any> { 
+  updatePoll(id: string, data: any): Observable<Poll> { 
     return this.http.put(`${this.apiUrl}/${id}`, data, { headers: this.getAuthHeaders() }); 
   }
 
-  deletePoll(id: string): Observable<any> { 
+  deletePoll(id: string): Observable<Poll> { 
     return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }); 
   }
 
@@ -178,22 +180,22 @@ export class PollService {
   // }
 getMyCompletedSurveys() {
     // Змінюємо помилковий /my-history на правильний /my/completed
-    return this.http.get(`${this.apiUrl}/my/completed`, { 
+    return this.http.get<Poll>(`${this.apiUrl}/my/completed`, { 
       headers: this.getAuthHeaders() 
     });
   }
   // Отримання деталей за публічним ID
-  getPollByPublicId(publicId: string): Observable<any> { 
-    return this.http.get(`${this.apiUrl}/public/${publicId}`, { headers: this.getAuthHeaders() }); 
+  getPollByPublicId(publicId: string): Observable<Poll> { 
+    return this.http.get<Poll>(`${this.apiUrl}/public/${publicId}`, { headers: this.getAuthHeaders() }); 
   }
-vote(publicId: string, optionId: string): Observable<any> {
+vote(publicId: string, optionId: string): Observable<Poll> {
   return this.http.post(`${this.apiUrl}/public/${publicId}/vote`, { optionId }, { 
     headers: this.getAuthHeaders() 
   });
 }
 
-  getPollResults(publicId: string): Observable<any> {
-  return this.http.get(`${this.apiUrl}/public/${publicId}/results`, {
+  getPollResults(publicId: string): Observable<Poll> {
+  return this.http.get<Poll>(`${this.apiUrl}/public/${publicId}/results`, {
     headers: this.getAuthHeaders()
   });
 }

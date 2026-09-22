@@ -13,23 +13,25 @@ export interface Option {
 /**
  * Основна модель опитування
  */
-export interface Poll {
-  // id: string;        // Унікальний ідентифікатор опитування
-  // title: string;      // Назва опитування
-  // question: string;   // Текст питання
-  // options: Option[];  // Список варіантів відповідей
-
  
-  id: string;
-  publicId?: string;
-  question: string;       // Змінили title на question
-  totalVotes?: number;    // Додали це поле, щоб TS не сварився!
-  createdAt?: string;
-  hasVoted?: boolean;
- 
-
+export interface PollOption {
+  id?: string;
+  text: string;
+  votes?: number;
+  percentage?: number;
 }
 
+
+export interface Poll {
+  id?: string;
+  publicId?: string;
+  question?: string; 
+  options?: PollOption[];
+  totalVotes?: number;
+  hasVoted?: boolean;
+  selectedOptionId?: string;
+  createdAt?: string;
+}
 /**
  * Модель результатів опитування для побудови діаграми
  */
