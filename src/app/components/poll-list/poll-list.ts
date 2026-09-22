@@ -148,32 +148,54 @@ export class PollListComponent implements OnInit {
 //   });
 // }
 
+// loadMyHistory() {
+//     console.log('1️⃣ Метод loadMyHistory успішно викликано!');
+//     this.showHistoryView = true;
+    
+//     this.pollService.getMyCompletedSurveys().subscribe({
+//       next: (data: any) => {
+//         console.log('2️⃣ Відповідь від сервера отримано (сирі дані):', data);
+        
+//         // Витягуємо масив незалежно від того, як сервер його загорнув
+//         const surveysArray = Array.isArray(data) ? data : (data.surveys || data.data || []);
+//         console.log('3️⃣ Витягнутий масив історії:', surveysArray);
+        
+//         this.myHistory = surveysArray;
+//         console.log('4️⃣ Змінна this.myHistory тепер містить:', this.myHistory);
+//         console.log('5️⃣ Прапорець showHistoryView:', this.showHistoryView);
+        
+//         this.cdr.detectChanges();
+//         console.log('6️⃣ Екран примусово оновлено (detectChanges спрацював)!');
+//       },
+//       error: (err: any) => {
+//         console.error('❌ Помилка завантаження історії:', err);
+//       }
+//     });
+//   }
+
 loadMyHistory() {
-    console.log('1️⃣ Метод loadMyHistory успішно викликано!');
+    console.log('1️⃣ Виклик loadMyHistory()');
     this.showHistoryView = true;
     
+    // Перевіряємо, чи є взагалі токен після оновлення сторінки
+    console.log('2️⃣ Поточний токен:', localStorage.getItem('token') ? 'Присутній' : 'ВІДСУТНІЙ!');
+
     this.pollService.getMyCompletedSurveys().subscribe({
       next: (data: any) => {
-        console.log('2️⃣ Відповідь від сервера отримано (сирі дані):', data);
+        console.log('3️⃣ Сирі дані історії від сервера:', data);
         
-        // Витягуємо масив незалежно від того, як сервер його загорнув
-        const surveysArray = Array.isArray(data) ? data : (data.surveys || data.data || []);
-        console.log('3️⃣ Витягнутий масив історії:', surveysArray);
+        // Шукаємо масив у відповіді
+        const serverHistory = Array.isArray(data) ? data : (data.surveys || []);
+        console.log('4️⃣ Витягнутий масив історій:', serverHistory);
         
-        this.myHistory = surveysArray;
-        console.log('4️⃣ Змінна this.myHistory тепер містить:', this.myHistory);
-        console.log('5️⃣ Прапорець showHistoryView:', this.showHistoryView);
-        
+        this.myHistory = serverHistory;
         this.cdr.detectChanges();
-        console.log('6️⃣ Екран примусово оновлено (detectChanges спрацював)!');
       },
       error: (err: any) => {
-        console.error('❌ Помилка завантаження історії:', err);
+        console.error('❌ Помилка завантаження історії з сервера:', err);
       }
     });
   }
-
-
   updateSelectedText(item: any) {
     console.log(`✍️ [updateSelectedText] poll: ${item.publicId}, selectedOptionId: ${item.selectedOptionId}, current selectedOptionText: ${item.selectedOptionText}`, item.options);
     if (item.options && item.selectedOptionId && !item.selectedOptionText) {
