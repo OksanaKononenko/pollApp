@@ -1,0 +1,59 @@
+/* --- Основний контейнер навігації --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background-color: #343a40;
+  color: white;
+  font-family: sans-serif;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.brand-link {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-nav {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #f8f9fa;
+  text-decoration: none;
+}
+
+/* --- Кнопки навігації --- */
+.btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}

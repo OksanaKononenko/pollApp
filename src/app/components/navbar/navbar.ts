@@ -8,7 +8,9 @@ import { filter } from 'rxjs/operators';
   selector: 'app-navbar',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './navbar.html'
+  templateUrl: './navbar.html',
+    
+  styleUrls: ['./navbar.css'] 
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn: boolean = false;
