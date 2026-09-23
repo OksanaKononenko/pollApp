@@ -1,195 +1,364 @@
-<div class="admin-container" style="padding: 20px; font-family: sans-serif; max-width: 800px; margin: 0 auto;">
+<div class="admin-container" >
+
+ <div >
+ <h1>🛠️ Кабінет адміністратора</h1>
+ <div>
+
+<!-- ФОРМА СТВОРЕННЯ / РЕДАГУВАННЯ -->
+<div class="form-card">
+  <h2 class="form-title">{{ isEditMode ? '✏️ Редагувати опитування' : '➕ Створити нове опитування' }}</h2>
   
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #28a745; padding-bottom: 10px; margin-bottom: 20px;">
-    <h1>🛠️ Кабінет адміністратора</h1>
-    
+  <div class="form-group">
+    <label class="form-label">Питання:</label>
+    <input type="text" [(ngModel)]="surveyForm.question" placeholder="Введіть текст питання..." class="form-input">
   </div>
 
-  <!-- ФОРМА СТВОРЕННЯ / РЕДАГУВАННЯ -->
-  <div style="border: 2px solid #28a745; padding: 20px; border-radius: 8px; background: #f9f9f9; margin-bottom: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <h2 style="margin-top: 0;">{{ isEditMode ? '✏️ Редагувати опитування' : '➕ Створити нове опитування' }}</h2>
+  <div class="form-group">
+    <label class="form-label">Варіанти відповідей:</label>
     
-    <div style="margin-bottom: 15px;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;">Питання:</label>
-      <input type="text" [(ngModel)]="surveyForm.question" placeholder="Введіть текст питання..." style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+    <div *ngFor="let option of surveyForm.options; let i = index" class="option-row">
+      <input type="text" [(ngModel)]="option.text" [placeholder]="'Варіант ' + (i + 1)" class="form-input-flex">
+      <button (click)="removeOptionField(i)" class="btn btn-danger">Видалити</button>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label style="display: block; font-weight: bold; margin-bottom: 5px;">Варіанти відповідей:</label>
-      
-      <div *ngFor="let option of surveyForm.options; let i = index" style="display: flex; align-items: center; margin-bottom: 8px;">
-        <input type="text" [(ngModel)]="option.text" [placeholder]="'Варіант ' + (i + 1)" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; margin-right: 10px;">
-        <button (click)="removeOptionField(i)" style="background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">Видалити</button>
-      </div>
-
-      <button (click)="addOptionField()" style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 5px;">
-        ➕ Додати варіант
-      </button>
-    </div>
-
-    <div style="margin-top: 20px;">
-      <button (click)="saveSurvey()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 10px;">
-        💾 Зберегти
-      </button>
-      <button (click)="resetForm()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
-        {{ isEditMode ? '❌ Скасувати редагування' : '🧹 Очистити форму' }}
-      </button>
-    </div>
+    <button (click)="addOptionField()" class="btn btn-info mt-5">
+      ➕ Додати варіант
+    </button>
   </div>
 
-  <!-- СПИСОК ОПИТУВАНЬ ІЗ ПАГІНАЦІЄЮ -->
+  <div class="form-actions">
+    <button (click)="saveSurvey()" class="btn btn-success font-bold mr-10">
+      💾 Зберегти
+    </button>
+    <button (click)="resetForm()" class="btn btn-secondary">
+      {{ isEditMode ? '❌ Скасувати редагування' : '🧹 Очистити форму' }}
+    </button>
+  </div>
+</div>
 
-  <div>
-    <h1>МОЇ ОПИТУВАННЯ</h1>
 
-    <div *ngIf="polls.length > 0; else noPolls">
+ <!-- СПИСОК ОПИТУВАНЬ ІЗ ПАГІНАЦІЄЮ -->
 
-      <!-- ОДНЕ ОПИТУВАННЯ -->
-      <div
-        *ngFor="let poll of paginatedPolls"
-        style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px;"
-      >
+  <div>
 
-        <!-- ПИТАННЯ -->
-        <h2>{{ poll.question }}</h2>
 
-        <p>Голосів: {{ poll.totalVotes }}</p>
-        <!-- <p>ID: {{ poll.publicId }}</p> -->
 
-        <!-- ВАРІАНТИ ВІДПОВІДЕЙ -->
-        <div *ngIf="poll.options">
+    <h1>МОЇ ОПИТУВАННЯ</h1>
 
-          <h4>Варіанти відповідей:</h4>
 
-          <div *ngFor="let option of poll.options">
-            • {{ option.text }}
-          </div>
+<!--     <div *ngIf="polls.length > 0; else noPolls">
 
-        </div>
+      <!-- ОДНЕ ОПИТУВАННЯ -->
+<!--       <div
+        *ngFor="let poll of paginatedPolls"
+        style="border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px;"
+      >
 
-        <!-- КНОПКИ ДІЙ -->
-        <div
-          style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;"
-        >
+        <!-- ПИТАННЯ -->
+<!--         <h2>{{ poll.question }}</h2>
 
-       <button
-  (click)="editPoll(poll)"
-  [disabled]="poll.totalVotes > 0"
-  [style.background]="poll.totalVotes > 0 ? '#ccc' : '#ffc107'"
-  [style.color]="poll.totalVotes > 0 ? '#888' : '#333'"
-  [style.cursor]="poll.totalVotes > 0 ? 'not-allowed' : 'pointer'"
-  [title]="poll.totalVotes > 0 ? 'Це опитування вже має голоси, редагування заборонено' : 'Редагувати'"
-  style="border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
+        <p>Голосів: {{ poll.totalVotes }}</p>
+        <!-- <p>ID: {{ poll.publicId }}</p> -->
+
+        <!-- ВАРІАНТИ ВІДПОВІДЕЙ -->
+<!--         <div *ngIf="poll.options">
+
+          <h4>Варіанти відповідей:</h4>
+
+          <div *ngFor="let option of poll.options">
+            • {{ option.text }}
+          </div>
+
+        </div> -->  
+
+        <!-- КНОПКИ ДІЙ -->
+<!--         <div
+          style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;"
+        >
+
+       <button
+  (click)="editPoll(poll)"
+  [disabled]="poll.totalVotes > 0"
+  [style.background]="poll.totalVotes > 0 ? '#ccc' : '#ffc107'"
+  [style.color]="poll.totalVotes > 0 ? '#888' : '#333'"
+  [style.cursor]="poll.totalVotes > 0 ? 'not-allowed' : 'pointer'"
+  [title]="poll.totalVotes > 0 ? 'Це опитування вже має голоси, редагування заборонено' : 'Редагувати'"
+  style="border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
 >
-  ✏️ Редагувати
+  ✏️ Редагувати
 </button>
 
-          <button
-            (click)="viewResults(poll)"
-            [disabled]="!poll.totalVotes || poll.totalVotes === 0"
-            [title]="!poll.totalVotes || poll.totalVotes === 0 ? 'Ще немає голосів для перегляду' : 'Переглянути результати'"
-            style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
-          >
-            {{ expandedPollId === poll.id ? '❌ Сховати результати' : '👁️ Переглянути результати' }}
-          </button>
+            <!-- <button
+            (click)="viewResults(poll)"
+            [disabled]="!poll.totalVotes || poll.totalVotes === 0"
+            [title]="!poll.totalVotes || poll.totalVotes === 0 ? 'Ще немає голосів для перегляду' : 'Переглянути результати'"
+            style="background: #17a2b8; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold;"
+          >
+            {{ expandedPollId === poll.id ? '❌ Сховати результати' : '👁️ Переглянути результати' }}
+          </button> -->
+<!-- 
+<button
+  (click)="viewResults(poll)"
+  class="btn btn-info btn-sm"
+  [disabled]="!poll.totalVotes || poll.totalVotes === 0"
+  [title]="!poll.totalVotes || poll.totalVotes === 0 ? 'Ще немає голосів для перегляду' : 'Переглянути результати'"
+>
+  {{ expandedPollId === poll.id ? '❌ Сховати результати' : '👁️ Переглянути результати' }}
+</button>
 
-          <button
-            (click)="deletePoll(poll.id)"
-            style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;"
-          >
-            🗑 Видалити
-          </button>
 
-        </div>
 
-        <!-- РЕЗУЛЬТАТИ -->
-        <div
-          *ngIf="expandedPollId === poll.id && expandedPollData"
-          style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;"
-        >
+          <button
+            (click)="deletePoll(poll.id)"
+            style="background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: auto;"
+          >
+            🗑 Видалити
+          </button>
 
-          <h4 style="margin-top: 0;">
-            📊 Результати голосування:
-          </h4>
+        </div> -->
 
-          <div
-            *ngFor="let option of expandedPollData.options"
-            style="margin-bottom: 12px;"
-          >
+        <!-- РЕЗУЛЬТАТИ -->
+<!--         <div
+          *ngIf="expandedPollId === poll.id && expandedPollData"
+          style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;"
+        >
 
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+          <h4 style="margin-top: 0;">
+            📊 Результати голосування:
+          </h4>
 
-              <span style="font-weight: 500;">
-                {{ option.text || option.name }}
-              </span>
+          <div
+            *ngFor="let option of expandedPollData.options"
+            style="margin-bottom: 12px;"
+          >
 
-              <strong>
-                {{ option.votesCount || 0 }}
-                голосів
-                ({{ option.percentage || 0 }}%)
-              </strong>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
 
-            </div>
+              <span style="font-weight: 500;">
+                {{ option.text || option.name }}
+              </span>
 
-            <div
-              style="background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden;"
-            >
-              <div
-                [style.width.%]="option.percentage || 0"
-                style="background: #0d6efd; height: 100%; transition: width 0.3s ease;"
-              ></div>
-            </div>
+              <strong>
+                {{ option.votesCount || 0 }}
+                голосів
+                ({{ option.percentage || 0 }}%)
+              </strong>
 
-          </div>
+            </div>
 
-          <hr>
+            <div
+              style="background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden;"
+            >
+              <div
+                [style.width.%]="option.percentage || 0"
+                style="background: #0d6efd; height: 100%; transition: width 0.3s ease;"
+              ></div>
+            </div>
 
-          <div style="text-align: right; color: #6c757d;">
-            Всього голосів:
-            <strong>
-              {{ expandedPollData.totalVotes || 0 }}
-            </strong>
-          </div>
+          </div>
 
-        </div>
+          <hr>
 
+          <div style="text-align: right; color: #6c757d;">
+            Всього голосів:
+            <strong>
+              {{ expandedPollData.totalVotes || 0 }}
+            </strong>
+          </div>
+
+        </div> -->
+
+<!-- РЕЗУЛЬТАТИ -->
+<!-- <div *ngIf="expandedPollId === poll.id && expandedPollData" class="results-container">
+  
+  <h4 class="form-title">📊 Результати голосування:</h4>
+
+  <div *ngFor="let option of expandedPollData.options" class="result-item">
+    
+    <div class="result-stats">
+      <span>{{ option.text || option.name }}</span>
+      <strong>{{ option.votesCount || 0 }} голосів ({{ option.percentage || 0 }}%)</strong>
+    </div> -->
+
+    <!-- Обгортка шкали та сама лінія -->
+    <!-- <div class="progress-track">
+      <div 
+        class="progress-fill" 
+        [style.width]="(option.percentage || 0) + '%'">
       </div>
-      <!-- КІНЕЦЬ ОДНОГО ОПИТУВАННЯ -->
+    </div>
+
+  </div>
+
+  <hr>
+
+  <div class="total-votes">
+    Всього голосів: <strong>{{ expandedPollData.totalVotes || 0 }}</strong>
+  </div>
+
+</div> --> 
+
+
+<!-- 
+      </div> -->  
+      <!-- КІНЕЦЬ ОДНОГО ОПИТУВАННЯ -->
+
+<!--     </div> --> 
+
+
+
+
+
+<div *ngIf="polls.length > 0; else noPolls">
+
+  <!-- ОДНЕ ОПИТУВАННЯ -->
+  <div *ngFor="let poll of paginatedPolls" class="poll-card">
+
+    <!-- ПИТАННЯ -->
+    <h2>{{ poll.question }}</h2>
+    <p>Голосів: {{ poll.totalVotes }}</p>
+
+    <!-- ВАРІАНТИ ВІДПОВІДЕЙ -->
+    <div *ngIf="poll.options">
+      <h4>Варіанти відповідей:</h4>
+      <div *ngFor="let option of poll.options">
+        • {{ option.text }}
+      </div>
+    </div>
+
+    <!-- КНОПКИ ДІЙ -->
+    <div class="poll-actions">
+
+      <button
+        (click)="editPoll(poll)"
+        class="btn btn-warning btn-sm"
+        [disabled]="poll.totalVotes > 0"
+        [title]="poll.totalVotes > 0 ? 'Це опитування вже має голоси, редагування заборонено' : 'Редагувати'"
+      >
+        ✏️ Редагувати
+      </button>
+
+      <button
+        (click)="viewResults(poll)"
+        class="btn btn-info btn-sm"
+        [disabled]="!poll.totalVotes || poll.totalVotes === 0"
+        [title]="!poll.totalVotes || poll.totalVotes === 0 ? 'Ще немає голосів для перегляду' : 'Переглянути результати'"
+      >
+        {{ expandedPollId === poll.id ? '❌ Сховати результати' : '👁️ Переглянути результати' }}
+      </button>
+
+      <button
+        (click)="deletePoll(poll.id)"
+        class="btn btn-danger btn-sm align-right"
+      >
+        🗑 Видалити
+      </button>
 
     </div>
 
-    <!-- ЯКЩО ОПИТУВАНЬ НЕМАЄ -->
-    <ng-template #noPolls>
-      <p>Опитування відсутні. Створіть перше зверху!</p>
-    </ng-template>
+    <!-- РЕЗУЛЬТАТИ -->
+    <div *ngIf="expandedPollId === poll.id && expandedPollData" class="results-container">
+      
+      <h4 class="form-title">📊 Результати голосування:</h4>
 
-    <!-- ПАГІНАЦІЯ -->
-    <div
-      style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px; background: #e9ecef; border-radius: 6px;"
-    >
+      <div *ngFor="let option of expandedPollData.options" class="result-item">
+        
+        <div class="result-stats">
+          <span>{{ option.text || option.name }}</span>
+          <strong>{{ option.votesCount || 0 }} голосів ({{ option.percentage || 0 }}%)</strong>
+        </div>
 
-      <button
-        (click)="prevPage()"
-        [disabled]="currentPage === 1"
-        style="padding: 10px 20px;"
-      >
-        ⬅️ Попередня
-      </button>
+        <!-- Обгортка шкали та сама лінія -->
+        <div class="progress-track">
+          <div 
+            class="progress-fill" 
+            [style.width]="(option.percentage || 0) + '%'">
+          </div>
+        </div>
 
-      <span style="font-weight: bold;">
-        Сторінка {{ currentPage }} з {{ totalPages }}
-      </span>
+      </div>
 
-      <button
-        (click)="nextPage()"
-        [disabled]="currentPage === totalPages"
-        style="padding: 10px 20px;"
-      >
-        Наступна ➡️
-      </button>
+      <hr>
+
+      <div class="total-votes">
+        Всього голосів: <strong>{{ expandedPollData.totalVotes || 0 }}</strong>
+      </div>
 
     </div>
 
   </div>
+  <!-- КІНЕЦЬ ОДНОГО ОПИТУВАННЯ -->
+
+</div>
+
+
+
+
+
+
+
+<!-- ---------------------------------------------------------- -->
+
+    <!-- ЯКЩО ОПИТУВАНЬ НЕМАЄ -->
+    <ng-template #noPolls>
+      <p>Опитування відсутні. Створіть перше зверху!</p>
+    </ng-template>
+
+    <!-- ПАГІНАЦІЯ -->
+<!--     <div
+      style="display: flex; justify-content: space-between; align-items: center; margin-top: 25px; padding: 15px; background: #e9ecef; border-radius: 6px;"
+    >
+
+      <button
+        (click)="prevPage()"
+        [disabled]="currentPage === 1"
+        style="padding: 10px 20px;"
+      >
+        ⬅️ Попередня
+      </button>
+
+      <span style="font-weight: bold;">
+        Сторінка {{ currentPage }} з {{ totalPages }}
+      </span>
+
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+        style="padding: 10px 20px;"
+      >
+        Наступна ➡️
+      </button>
+
+    </div> -->
+
+
+
+<!-- ПАГІНАЦІЯ -->
+<div class="pagination-container">
+  
+  <button 
+    (click)="prevPage()" 
+    [disabled]="currentPage === 1" 
+    class="btn-pagination"
+  >
+    ⬅️ Попередня
+  </button>
+
+  <span class="pagination-text">
+    Сторінка {{ currentPage }} з {{ totalPages }}
+  </span>
+
+  <button 
+    (click)="nextPage()" 
+    [disabled]="currentPage === totalPages" 
+    class="btn-pagination"
+  >
+    Наступна ➡️
+  </button>
+
+</div>
+
+
+  </div>
 
 </div>
