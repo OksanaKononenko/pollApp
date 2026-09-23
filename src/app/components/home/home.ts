@@ -10,7 +10,9 @@ import { PollService } from '../../core/services/poll'; // Перевірте п
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterModule], // 👈 Додали RouterModule
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+    
+  styleUrls: ['home.css'] 
 })
 export class HomeComponent implements OnInit {
   polls: any[] = [];

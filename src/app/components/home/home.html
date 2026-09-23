@@ -1,26 +1,26 @@
-<div style="max-width: 800px; margin: 60px auto; padding: 30px; font-family: sans-serif; text-align: center; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+ <div class="welcome-container">
   
-  <h1 style="color: #333; margin-bottom: 20px;">
+  <h1 class="welcome-title">
     👋 Вітаємо в Системі Опитувань!
   </h1>
 
-  <!-- БЛОК ДЛЯ ГОСТЕЙ (список не вантажимо, бо бекенд не пускає) -->
+  <!-- БЛОК ДЛЯ ГОСТЕЙ -->
   <div *ngIf="!isLoggedIn">
-    <p style="color: #666; font-size: 1.1em; line-height: 1.6; margin-bottom: 30px;">
+    <p class="welcome-text">
       Щоб переглянути список доступних питань та взяти участь у голосуванні, вам необхідно увійти в систему або створити новий акаунт.
     </p>
     
-    <a routerLink="/login" style="display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.1em; transition: background 0.3s;">
+    <a routerLink="/login" class="btn btn-primary">
       🔒 Увійти / Зареєструватися
     </a>
   </div>
 
   <!-- БЛОК ДЛЯ ЗАЛОГІНЕНИХ КОРИСТУВАЧІВ -->
   <div *ngIf="isLoggedIn">
-    <p style="color: #28a745; font-size: 1.1em; font-weight: bold; margin-bottom: 20px;">
+    <p class="success-text">
       Ви успішно авторизовані в системі!
     </p>
-    <a routerLink="/polls" style="display: inline-block; background: #28a745; color: white; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 1.1em;">
+    <a routerLink="/polls" class="btn btn-success">
       👉 Перейти до списку опитувань
     </a>
   </div>
