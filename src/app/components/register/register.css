@@ -1,0 +1,72 @@
+/* --- Контейнер форми --- */
+.auth-card {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: sans-serif;
+  background: #dae5dd;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.auth-title {
+  text-align: center;
+  color: #007bff;
+  margin-top: 0;
+}
+
+/* --- Групи полів --- */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group-mb20 {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.password-hint {
+  color: #666;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+}
+
+/* --- Кнопка та перемикач --- */
+.btn-submit {
+  width: 100%;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.switch-container {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.switch-link {
+  cursor: pointer;
+  color: #0d6efd;
+  text-decoration: underline;
+  font-size: 0.9em;
+}

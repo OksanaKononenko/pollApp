@@ -210,7 +210,8 @@ import { AuthService } from '../../core/services/auth';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './register.html'
+  templateUrl: './register.html',
+  styleUrls: ['./register.css']
 })
 export class RegisterComponent implements OnInit {
   isLoginMode: boolean = false;
