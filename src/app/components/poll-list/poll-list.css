@@ -1,5 +1,254 @@
+.poll-list-container {
+
+padding: 20px; font-family: sans-serif; max-width: 800px; margin: 0 auto;
+
+
+}
+
+/* --- Шапка кабінету --- */
+.cabinet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.cabinet-title {
+  margin: 0;
+  color: #333;
+}
+
+
+/* --- Панель навігації --- */
+.cabinet-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.nav-buttons-left {
+  display: flex;
+  gap: 10px;
+}
+
+/* --- Кнопки --- */
+.btn {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+
+
+
+/* --- Заголовки та стани --- */
+.polls-title {
+  text-align: center;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+}
+
+.empty-state {
+  text-align: center;
+  color: #777;
+  padding: 20px;
+}
+
+/* --- Картка опитування --- */
+.poll-card {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.poll-question {
+  margin-top: 0;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.poll-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+/* --- Кнопки --- */
+.btn {
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.9em;
+}
+
+.btn-success {
+  background-color: #28a745;
+}
+
+/* Автоматично робить кнопку сірою, коли [disabled]="poll.hasVoted" */
+.btn-success:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+/* --- Розгорнуті деталі (Голосування та Результати) --- */
+.expanded-container {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.expanded-title {
+  margin-top: 0;
+}
+
+.option-row {
+  margin-bottom: 10px;
+}
+
+.option-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.option-input {
+  margin-right: 10px;
+}
+
+.loading-text {
+  color: #666;
+  font-size: 0.9em;
+  margin: 10px 0;
+}
+
+/* --- Шкала результатів --- */
+.result-item {
+  margin-bottom: 8px;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.progress-track {
+  background-color: #e9ecef;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background-color: #0d6efd;
+  height: 100%;
+}
+
+.total-votes {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* --- Блок для гостей --- */
+.guest-warning {
+  margin-top: 10px;
+}
+
+.guest-text {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.guest-link {
+  color: #007bff;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 0.9em;
+}
 
 
 
 
 
+
+/* --- Блок історії --- */
+.history-heading {
+  color: #17a2b8;
+  margin-bottom: 20px;
+}
+
+.history-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.history-question {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.history-choice {
+  color: #28a745;
+  margin-bottom: 8px;
+}
+
+.history-date {
+  display: block;
+  color: #6c757d;
+  font-size: 0.85em;
+}

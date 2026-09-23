@@ -8,7 +8,9 @@ import { PollService } from '../../core/services/poll';
   selector: 'app-poll-list',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './poll-list.html'
+  templateUrl: './poll-list.html',
+    
+  styleUrls: ['./poll-list.css'] 
 })
 export class PollListComponent implements OnInit {
   polls: any[] = [];
